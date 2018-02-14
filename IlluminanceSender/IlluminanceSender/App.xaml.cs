@@ -1,21 +1,19 @@
-﻿using Prism;
+﻿using IlluminanceSender.Interfaces;
+using IlluminanceSender.Models;
+using Prism;
 using Prism.Ioc;
 using IlluminanceSender.ViewModels;
 using IlluminanceSender.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Prism.Unity;
+using Unity.Lifetime;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace IlluminanceSender
 {
     public partial class App : PrismApplication
     {
-        /* 
-         * The Xamarin Forms XAML Previewer in Visual Studio uses System.Activator.CreateInstance.
-         * This imposes a limitation in which the App class must have a default constructor. 
-         * App(IPlatformInitializer initializer = null) cannot be handled by the Activator.
-         */
         public App() : this(null) { }
 
         public App(IPlatformInitializer initializer) : base(initializer) { }
@@ -31,6 +29,8 @@ namespace IlluminanceSender
         {
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
+
+            containerRegistry.Register<IAllPageModel, AllPageModel>();
         }
     }
 }

@@ -5,8 +5,10 @@ using System.Text;
 
 namespace IlluminanceSender.Interfaces
 {
-    public interface IAllPageModel : INotifyPropertyChanged
+    public interface ICoreModel : INotifyPropertyChanged
     {
         int Temp { get; set; }
+
+        ISensorManager SensorManager { get; set; }
     }
 }

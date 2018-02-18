@@ -1,8 +1,10 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using IlluminanceSender.Interfaces;
 using Prism;
 using Prism.Ioc;
+using Unity.Lifetime;
 
 namespace IlluminanceSender.Droid
 {
@@ -25,7 +27,7 @@ namespace IlluminanceSender.Droid
     {
         public void RegisterTypes(IContainerRegistry container)
         {
-            // Register any platform specific implementations
+            container.Register<ISensorManager,SensorManager>();
         }
     }
 }

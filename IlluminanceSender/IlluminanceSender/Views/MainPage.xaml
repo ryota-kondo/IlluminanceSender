@@ -6,7 +6,10 @@
 
     <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
         <Label Text="トイレの照度アプリ" />
+        
+        <Label Text="{Binding IllNum}"/>
 
+        <Label Text="{Binding OnOffText}" />
         <Switch IsToggled="{Binding StartUp, Mode=TwoWay}" 
                 HorizontalOptions="EndAndExpand"
                 AbsoluteLayout.LayoutFlags="All"

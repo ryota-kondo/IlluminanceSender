@@ -6,13 +6,16 @@ using Prism.Mvvm;
 
 namespace IlluminanceSender.Models
 {
-    class AllPageModel : BindableBase, IAllPageModel
+    class CoreModel : BindableBase,ICoreModel
     {
         public int Temp { get; set; }
+        public ISensorManager SensorManager { get; set; }
 
-        public AllPageModel()
+        public CoreModel(ISensorManager sensorManager)
         {
             Temp = 12;
+
+            this.SensorManager = sensorManager;
         }
     }
 }

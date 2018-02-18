@@ -30,7 +30,7 @@ namespace IlluminanceSender
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
 
-            containerRegistry.Register<IAllPageModel, AllPageModel>();
+            containerRegistry.Register<ICoreModel, CoreModel>();
         }
     }
 }

@@ -28,6 +28,7 @@ namespace IlluminanceSender.Droid
         public void RegisterTypes(IContainerRegistry container)
         {
             container.Register<IFetchSensorData, FetchSensorData>();
+            container.Register<IBackgroundTask, BackgroundTask>();
         }
     }
 }

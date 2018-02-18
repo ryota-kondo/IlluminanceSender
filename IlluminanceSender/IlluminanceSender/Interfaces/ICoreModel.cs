@@ -8,5 +8,6 @@ namespace IlluminanceSender.Interfaces
     public interface ICoreModel : INotifyPropertyChanged
     {
         IFetchSensorData FetchSensorData { get; set; }
+        IBackgroundTask BackgroundTask { get; set; }
     }
 }

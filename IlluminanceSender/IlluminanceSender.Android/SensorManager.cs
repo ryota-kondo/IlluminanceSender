@@ -40,7 +40,6 @@ namespace IlluminanceSender.Droid
             if (e.Sensor.Type == SensorType.Light)
             {
                 lux = e.Values[0];
-
             }
         }
 

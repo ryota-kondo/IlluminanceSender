@@ -45,10 +45,12 @@ namespace IlluminanceSender.ViewModels
             {
                 StartTimer();
                 _model.FetchSensorData.SetListener();
+                _model.BackgroundTask.StartBackgroundTask();
             }
             else
             {
                 _model.FetchSensorData.RemoveListener();
+                _model.BackgroundTask.StopBackgroundTask();
             }
         }
 

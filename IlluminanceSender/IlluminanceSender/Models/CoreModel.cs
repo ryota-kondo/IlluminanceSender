@@ -8,14 +8,11 @@ namespace IlluminanceSender.Models
 {
     class CoreModel : BindableBase,ICoreModel
     {
-        public int Temp { get; set; }
-        public ISensorManager SensorManager { get; set; }
+        public IFetchSensorData FetchSensorData { get; set; }
 
-        public CoreModel(ISensorManager sensorManager)
+        public CoreModel(IFetchSensorData fetchSensorData)
         {
-            Temp = 12;
-
-            this.SensorManager = sensorManager;
+            this.FetchSensorData = fetchSensorData;
         }
     }
 }

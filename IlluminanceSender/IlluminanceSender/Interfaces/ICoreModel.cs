@@ -7,8 +7,6 @@ namespace IlluminanceSender.Interfaces
 {
     public interface ICoreModel : INotifyPropertyChanged
     {
-        int Temp { get; set; }
-
-        ISensorManager SensorManager { get; set; }
+        IFetchSensorData FetchSensorData { get; set; }
     }
 }

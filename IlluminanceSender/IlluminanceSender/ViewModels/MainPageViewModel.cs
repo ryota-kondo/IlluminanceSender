@@ -14,13 +14,15 @@ namespace IlluminanceSender.ViewModels
     {
         private readonly ICoreModel _model;
 
-        private double _count;
-
-        private bool _startup;
-        public bool StartUp
+        private bool _startSwitch;
+        public bool StartSwitch
         {
-            get => _startup;
-            set => SetProperty(ref _startup, value);
+            get => _startSwitch;
+            set
+            {
+                SetProperty(ref _startSwitch, value);
+                SwitchChange();
+            }
         }
 
         private string _illNum;
@@ -30,19 +32,24 @@ namespace IlluminanceSender.ViewModels
             set => SetProperty(ref _illNum, value);
         }
 
-        private string _onOffText;
-        public string OnOffText
-        {
-            get => _onOffText;
-            set => SetProperty(ref _onOffText, value);
-        }
-
-
         public MainPageViewModel(INavigationService navigationService, ICoreModel model) : base(navigationService)
         {
             this._model = model;
-            Title = "Main Page";
+            Title = "照度アプリ";
             StartTimer();
+        }
+
+        private void SwitchChange()
+        {
+            if (StartSwitch)
+            {
+                StartTimer();
+                _model.FetchSensorData.SetListener();
+            }
+            else
+            {
+                _model.FetchSensorData.RemoveListener();
+            }
         }
 
 
@@ -52,17 +59,12 @@ namespace IlluminanceSender.ViewModels
                 TimeSpan.FromSeconds(1),
                 () =>
                 {
-                    // タイマーを繰り返すかどうかの判定
-                    var keepRecurring = _count < 10;
-                    if (!keepRecurring)
+                    IllNum = $"LUX => {_model.FetchSensorData.GetIlluminabce()}";
+                    if (!StartSwitch)
                     {
-                        // タイマー終了時の処理
-                        _count = 0;
+                        IllNum = $"LUX => No Data";
                     }
-
-                    // カウントをラベルのテキストに設定
-                    IllNum = $"{_model.SensorManager.GetIlluminabce()}";
-                    return keepRecurring;
+                    return StartSwitch;
                 });
         }
     }

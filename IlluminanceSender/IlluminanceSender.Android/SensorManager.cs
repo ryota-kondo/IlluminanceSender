@@ -5,21 +5,57 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Hardware;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using IlluminanceSender.Interfaces;
+using Xamarin.Forms;
 
 namespace IlluminanceSender.Droid
 {
-    class SensorManager:ISensorManager
+    class FetchSensorData :Activity, ISensorEventListener, IFetchSensorData
     {
-        private double _count = 1;
+        private static readonly Context Context = Android.App.Application.Context;
 
-        public double GetIlluminabce()
+        private readonly SensorManager _manager;
+        private readonly Sensor _lightSensor;
+
+        private float lux;
+
+        public FetchSensorData()
         {
-            return 3.141592 + _count++;
+            _manager = (SensorManager)Context.GetSystemService(Context.SensorService);
+            _lightSensor = _manager.GetDefaultSensor(SensorType.Light);
+        }
+
+        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
+        {
+            // accuracy に変更があった時の処理
+        }
+
+        public void OnSensorChanged(SensorEvent e)
+        {
+            if (e.Sensor.Type == SensorType.Light)
+            {
+                lux = e.Values[0];
+
+            }
+        }
+
+        public float GetIlluminabce()
+        {
+            return lux;
+        }
+
+        public void SetListener()
+        {
+            _manager.RegisterListener(this, _lightSensor, SensorDelay.Normal);
+        }
+        public void RemoveListener()
+        {
+            _manager.UnregisterListener(this);
         }
     }
 }

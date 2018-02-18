@@ -27,7 +27,7 @@ namespace IlluminanceSender.Droid
     {
         public void RegisterTypes(IContainerRegistry container)
         {
-            container.Register<ISensorManager,SensorManager>();
+            container.Register<IFetchSensorData, FetchSensorData>();
         }
     }
 }

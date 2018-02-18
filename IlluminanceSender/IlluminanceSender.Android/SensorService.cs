@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Net;
+using System.Net.Http;
 using Android.App;
 using Android.Content;
 using Android.Hardware;
@@ -25,6 +26,10 @@ namespace IlluminanceSender.Droid
         PendingIntent pendingIntent;
         private int startId;
 
+        private static HttpClient client = new HttpClient();
+
+        private bool OnOffFlag;
+
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
             // 後で調べる
@@ -43,11 +48,22 @@ namespace IlluminanceSender.Droid
                     .SetContentTitle("照度センサ")
                     .SetSmallIcon(Resource.Drawable.icon)
                     .SetContentText($"照度計測中です。{lux}")
-                    .SetOngoing(true) //常駐させる
+                    .SetOngoing(true)
                     .SetContentIntent(pendingIntent)
                     .Build();
 
                 StartForeground(startId, navigate);
+
+                if (lux > 50 && !OnOffFlag)
+                {
+                    SendLuxData("true");
+                    OnOffFlag = true;
+                }
+                if (lux < 5 && OnOffFlag)
+                {
+                    SendLuxData("false");
+                    OnOffFlag = false;
+                }
             }
         }
 
@@ -58,16 +74,17 @@ namespace IlluminanceSender.Droid
             _manager = (SensorManager)Context.GetSystemService(Context.SensorService);
             _lightSensor = _manager.GetDefaultSensor(SensorType.Light);
             _manager.RegisterListener(this, _lightSensor, SensorDelay.Normal);
-            this.startId = startId;
-
+            
+            // 通知使いまわし用設定
             Intent _intent = new Intent(Context, typeof(MainActivity));
             pendingIntent = PendingIntent.GetActivity(Context, 0, _intent, 0);
+            this.startId = startId;
 
             navigate = new Notification.Builder(Context)
                 .SetContentTitle("照度センサ")
                 .SetSmallIcon(Resource.Drawable.icon)
                 .SetContentText($"照度計測中です。{lux}")
-                .SetOngoing(true) //常駐させる
+                .SetOngoing(true) //常駐
                 .SetContentIntent(pendingIntent)
                 .Build();
 
@@ -75,6 +92,15 @@ namespace IlluminanceSender.Droid
 
 
             return StartCommandResult.NotSticky;
+        }
+
+        private async void SendLuxData(string flag)
+        {
+
+            var json = "{ \"OnOff\" :" + flag+ "}";
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            await client.PostAsync("https:", content);
         }
     }
 }

@@ -9,5 +9,6 @@ namespace IlluminanceSender.Interfaces
     {
         IFetchSensorData FetchSensorData { get; set; }
         IBackgroundTask BackgroundTask { get; set; }
+        ISaveAndLoad SaveAndLoad { get; set; }
     }
 }

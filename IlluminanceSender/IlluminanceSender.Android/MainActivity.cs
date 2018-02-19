@@ -29,6 +29,7 @@ namespace IlluminanceSender.Droid
         {
             container.Register<IFetchSensorData, FetchSensorData>();
             container.Register<IBackgroundTask, BackgroundTask>();
+            container.Register<ISaveAndLoad, SaveAndLoad>();
         }
     }
 }

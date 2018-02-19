@@ -4,17 +4,54 @@
              x:Class="IlluminanceSender.Views.MainPage"
              Title="{Binding Title}">
 
-    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-        <Label Text="照度アプリ" />
-        
-        <Label Text="{Binding IllNum}"/>
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness" iOS="0,20,0,0" />
+    </ContentPage.Padding>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="HorizontalOptions" Value="End" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="FontSize" Value="Medium" />
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="Accent" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-        <Label Text="{Binding OnOffText}" />
+    <Grid HorizontalOptions="Center" VerticalOptions="Center"
+              WidthRequest="320" RowSpacing="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="1" Text="ON/OFF" />
         <Switch IsToggled="{Binding StartSwitch, Mode=TwoWay}" 
-                HorizontalOptions="EndAndExpand"
-                AbsoluteLayout.LayoutFlags="All"
-                AbsoluteLayout.LayoutBounds="0.99, 0.5, 0.2, 1" />
-        
-    </StackLayout>
+                Grid.Row="1" Grid.Column="1" />
+
+        <Label Text="現在の照度" Grid.Row="2"/>
+        <Label Text="{Binding IllNum}" Grid.Row="2" Grid.Column="1" />
+
+        <Label Grid.Row="3" Text="送信先URL" />
+        <Entry Grid.Row="3" Grid.Column="1" Text="{Binding Url}"
+               Placeholder="(Url)" Keyboard="Url" />
+
+        <Label Grid.Row="4" Text="スレッショルド" />
+        <Entry Grid.Row="4" Grid.Column="1" Text="{Binding Threshold}"
+               Placeholder="(Numeric)" Keyboard="Numeric" />
+
+        <Button Text="適用" Command="{Binding SaveCommand}" Grid.Row="5" />
+
+    </Grid>
 
 </ContentPage>

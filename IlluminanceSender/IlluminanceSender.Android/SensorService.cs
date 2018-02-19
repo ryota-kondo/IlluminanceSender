@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Net;
@@ -11,6 +12,8 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using IlluminanceSender.Models;
+using Newtonsoft.Json;
 
 namespace IlluminanceSender.Droid
 {
@@ -29,6 +32,9 @@ namespace IlluminanceSender.Droid
         private static HttpClient client = new HttpClient();
 
         private bool OnOffFlag;
+
+        private float threshold;
+        private string url;
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
@@ -54,12 +60,12 @@ namespace IlluminanceSender.Droid
 
                 StartForeground(startId, navigate);
 
-                if (lux > 50 && !OnOffFlag)
+                if (lux > threshold && !OnOffFlag)
                 {
                     SendLuxData("true");
                     OnOffFlag = true;
                 }
-                if (lux < 5 && OnOffFlag)
+                if (lux < threshold && OnOffFlag)
                 {
                     SendLuxData("false");
                     OnOffFlag = false;
@@ -70,6 +76,17 @@ namespace IlluminanceSender.Droid
         // サービスの初期設定
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
+            // 設定情報の読み込み
+            var setting = new Setting();
+            var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var filePath = Path.Combine(documentsPath, "setting.json");
+            if (File.Exists(filePath))
+            {
+                setting = JsonConvert.DeserializeObject<Setting> (File.ReadAllText(filePath));
+                threshold = setting.Threshold;
+                url = setting.Url;
+            }
+
             // センサの設定
             _manager = (SensorManager)Context.GetSystemService(Context.SensorService);
             _lightSensor = _manager.GetDefaultSensor(SensorType.Light);
@@ -96,11 +113,18 @@ namespace IlluminanceSender.Droid
 
         private async void SendLuxData(string flag)
         {
-
             var json = "{ \"OnOff\" :" + flag+ "}";
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            await client.PostAsync("https:", content);
+            try
+            {
+                await client.PostAsync(url, content);
+            }
+            catch (Exception e)
+            {
+                // トーストで知らせる？
+                Console.WriteLine(e);
+            }
+            
         }
     }
 }

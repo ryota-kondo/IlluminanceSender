@@ -62,12 +62,12 @@ namespace IlluminanceSender.Droid
 
                 if (lux > threshold && !OnOffFlag)
                 {
-                    SendLuxData("true");
+                    SendLuxData(1);
                     OnOffFlag = true;
                 }
                 if (lux < threshold && OnOffFlag)
                 {
-                    SendLuxData("false");
+                    SendLuxData(0);
                     OnOffFlag = false;
                 }
             }
@@ -111,9 +111,9 @@ namespace IlluminanceSender.Droid
             return StartCommandResult.NotSticky;
         }
 
-        private async void SendLuxData(string flag)
+        private async void SendLuxData(int flag)
         {
-            var json = "{ \"OnOff\" :" + flag+ "}";
+            var json = "{ \"light\" :" + flag+ "}";
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             try
             {

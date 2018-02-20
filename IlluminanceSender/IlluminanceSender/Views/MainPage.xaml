@@ -29,6 +29,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -50,7 +51,12 @@
         <Entry Grid.Row="4" Grid.Column="1" Text="{Binding Threshold}"
                Placeholder="(Numeric)" Keyboard="Numeric" />
 
-        <Button Text="適用" Command="{Binding SaveCommand}" Grid.Row="5" />
+        <Label Grid.Row="5" Text="Forground/Background" />
+        <Switch IsToggled="{Binding ForgroundOrBackground, Mode=TwoWay}" 
+                Grid.Row="5" Grid.Column="1" />
+        
+        <Button Text="テスト送信" Command="{Binding TestPostCommand}" Grid.Row="6" />
+        <Button Text="適用" Command="{Binding SaveCommand}" Grid.Row="6" Grid.Column="1"/>
 
     </Grid>
 

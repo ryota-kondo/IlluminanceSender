@@ -64,12 +64,12 @@ namespace IlluminanceSender.ViewModels
             _pageDialogService = pageDialogService;
             this._model = model;
 
-            SaveCommand = new DelegateCommand(Save);
+            SaveCommand = new DelegateCommand(SettingSave);
 
             // 設定読み込み
             Setting data = new Setting();
 
-            var json = _model.SaveAndLoad.LoadData();
+            var json = _model.SaveAndLoad.LoadSetting();
             if (json != "")
             {
                 data = JsonConvert.DeserializeObject<Setting>(json);
@@ -79,7 +79,8 @@ namespace IlluminanceSender.ViewModels
                 data.OnOff = false;
                 data.Url = "http://";
                 data.Threshold = 25;
-                Save();
+
+                _model.SaveAndLoad.SaveSetting(JsonConvert.SerializeObject(data));
             }
 
             Title = "照度アプリ";
@@ -105,7 +106,7 @@ namespace IlluminanceSender.ViewModels
             }
         }
 
-        private void Save()
+        private void SettingSave()
         {
             var settingJson = new Setting();
             settingJson.OnOff = StartSwitch;
@@ -114,7 +115,7 @@ namespace IlluminanceSender.ViewModels
 
             var json = JsonConvert.SerializeObject(settingJson);
 
-            _model.SaveAndLoad.SaveData(json);
+            _model.SaveAndLoad.SaveSetting(json);
 
 
             _pageDialogService.DisplayAlertAsync("Infomation", "データを保存しました", "OK");

@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using System.IO;
 using IlluminanceSender.Interfaces;
 
 namespace IlluminanceSender.Droid
@@ -18,7 +7,7 @@ namespace IlluminanceSender.Droid
     {
         private string fileName = "setting.json";
 
-        public string LoadData()
+        public string LoadSetting()
         {
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = Path.Combine(documentsPath, fileName);
@@ -29,7 +18,7 @@ namespace IlluminanceSender.Droid
             return "";
         }
 
-        public void SaveData(string json)
+        public void SaveSetting(string json)
         {
             var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             var filePath = Path.Combine(documentsPath, fileName);

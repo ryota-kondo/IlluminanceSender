@@ -36,7 +36,11 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="1" Text="ON/OFF" />
+        <Label Grid.Row="0" Text="Fore/Back" />
+        <Switch IsToggled="{Binding ForgroundOrBackground, Mode=TwoWay}" 
+                Grid.Row="0" Grid.Column="1" />
+
+        <Label Grid.Row="1" Text="ON/OFF(Only Fore)" />
         <Switch IsToggled="{Binding StartSwitch, Mode=TwoWay}" 
                 Grid.Row="1" Grid.Column="1" />
 
@@ -50,13 +54,9 @@
         <Label Grid.Row="4" Text="スレッショルド" />
         <Entry Grid.Row="4" Grid.Column="1" Text="{Binding Threshold}"
                Placeholder="(Numeric)" Keyboard="Numeric" />
-
-        <Label Grid.Row="5" Text="Forground/Background" />
-        <Switch IsToggled="{Binding ForgroundOrBackground, Mode=TwoWay}" 
-                Grid.Row="5" Grid.Column="1" />
         
-        <Button Text="テスト送信" Command="{Binding TestPostCommand}" Grid.Row="6" />
-        <Button Text="適用" Command="{Binding SaveCommand}" Grid.Row="6" Grid.Column="1"/>
+        <Label Text="Version 0.0.1" Grid.Row="5" />
+        <Button Text="適用" Command="{Binding SaveCommand}" Grid.Row="5" Grid.Column="1"/>
 
     </Grid>
 

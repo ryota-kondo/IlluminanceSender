@@ -9,5 +9,6 @@ namespace IlluminanceSender.Models
         public bool OnOff { get; set; }
         public string Url { get; set; }
         public float Threshold { get; set; }
+        public bool ForgroundOrBackground { get; set; }
     }
 }

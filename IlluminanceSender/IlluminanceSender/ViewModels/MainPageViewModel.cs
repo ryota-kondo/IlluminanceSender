@@ -18,19 +18,27 @@ namespace IlluminanceSender.ViewModels
         private readonly IPageDialogService _pageDialogService;
         private readonly ICoreModel _model;
 
+        private SendServer sendServer;
+
+        private bool forgroundFlag;
+
         // 適用ボタン
         public DelegateCommand SaveCommand { get; set; }
 
-        // ON/OFFトグルスイッチ
+        // ON/OFFトグルスイッチ(フォアグラウンドのみ)
         private bool _startSwitch;
         public bool StartSwitch
         {
             get => _startSwitch;
-            set
-            {
-                SetProperty(ref _startSwitch, value);
-                SwitchChange();
-            }
+            set => SetProperty(ref _startSwitch, value);
+        }
+
+        // ForgroundOrBackgroundトグルスイッチ
+        private bool _forgroundOrBackground;
+        public bool ForgroundOrBackground
+        {
+            get => _forgroundOrBackground;
+            set => SetProperty(ref _forgroundOrBackground, value);
         }
 
         // 現在の照度値
@@ -68,7 +76,6 @@ namespace IlluminanceSender.ViewModels
 
             // 設定読み込み
             Setting data = new Setting();
-
             var json = _model.SaveAndLoad.LoadSetting();
             if (json != "")
             {
@@ -83,6 +90,8 @@ namespace IlluminanceSender.ViewModels
                 _model.SaveAndLoad.SaveSetting(JsonConvert.SerializeObject(data));
             }
 
+            sendServer = new SendServer(data.Url,data.Threshold);
+
             Title = "照度アプリ";
 
             _model.FetchSensorData.SetListener();
@@ -90,20 +99,10 @@ namespace IlluminanceSender.ViewModels
 
             // 設定情報の画面への反映
             StartSwitch = data.OnOff;
+            ForgroundOrBackground = data.ForgroundOrBackground;
+            forgroundFlag = data.ForgroundOrBackground;
             Url = data.Url;
             Threshold = $"{data.Threshold}";
-        }
-
-        private void SwitchChange()
-        {
-            if (StartSwitch)
-            {
-                _model.BackgroundTask.StartBackgroundTask();
-            }
-            else
-            {
-                _model.BackgroundTask.StopBackgroundTask();
-            }
         }
 
         private void SettingSave()
@@ -112,13 +111,23 @@ namespace IlluminanceSender.ViewModels
             settingJson.OnOff = StartSwitch;
             settingJson.Threshold = float.Parse(Threshold);
             settingJson.Url = Url;
+            settingJson.ForgroundOrBackground = ForgroundOrBackground;
 
             var json = JsonConvert.SerializeObject(settingJson);
 
             _model.SaveAndLoad.SaveSetting(json);
 
 
-            _pageDialogService.DisplayAlertAsync("Infomation", "データを保存しました", "OK");
+            _pageDialogService.DisplayAlertAsync("Infomation", "設定を適用しました", "OK");
+
+            //　設定の動作を適用
+            sendServer.SetSetting(settingJson.Url,settingJson.Threshold);
+            _model.BackgroundTask.StopBackgroundTask();
+            if (settingJson.ForgroundOrBackground)
+            {
+                _model.BackgroundTask.StartBackgroundTask();
+            }
+            forgroundFlag = settingJson.ForgroundOrBackground;
         }
 
 
@@ -128,7 +137,12 @@ namespace IlluminanceSender.ViewModels
                 TimeSpan.FromSeconds(1),
                 () =>
                 {
-                    IllNum = $"{_model.FetchSensorData.GetIlluminabce()}";
+                    var lux = _model.FetchSensorData.GetIlluminabce();
+                    IllNum = $"{lux}";
+                    if (forgroundFlag)
+                    {
+                        sendServer.CheckLux(lux);
+                    }
                     return true;
                 });
         }
